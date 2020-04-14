@@ -1,4 +1,9 @@
 class NewsArticle extends HTMLElement {
+
+  constructor() {
+    super();
+    this.root = this.attachShadow({ mode: 'open' });
+  }
   
   set article({ url, title, urlToImage, description }) {
     // this.innerHTML = `
@@ -10,6 +15,26 @@ class NewsArticle extends HTMLElement {
     // `;
 
     this.innerHTML = '';
+
+    // create style
+
+    const style = document.createElement('style');
+    style.textContent = `
+      h2 {
+        font-family: Georgia, 'Times New Roman', Times, serif;
+      }
+
+      a, a:visited {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      img {
+        width: 100%;
+      }
+    `;
+
+    // create content
 
     const anchor = document.createElement('a')
     anchor.href = url;
@@ -33,7 +58,9 @@ class NewsArticle extends HTMLElement {
       anchor.appendChild(paragraph);
     }
 
-    this.appendChild(anchor)
+    // add style and content
+    this.root.appendChild(style);
+    this.root.appendChild(anchor)
   }
 
 }
