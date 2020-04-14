@@ -1,3 +1,5 @@
+import { html, render } from '../node_modules/lit-html/lit-html.js';
+
 class NewsArticle extends HTMLElement {
 
   constructor() {
@@ -5,62 +7,42 @@ class NewsArticle extends HTMLElement {
     this.root = this.attachShadow({ mode: 'open' });
   }
   
-  set article({ url, title, urlToImage, description }) {
-    // this.innerHTML = `
-    //   <a href="${url}">
-    //     <h2>${title}</h2>
-    //     <img src="${urlToImage || ''}">
-    //     <p>${description || ''}</p>
-    //   </a>
-    // `;
+  set article(data) {
 
-    this.innerHTML = '';
+    const template = ({ url, title, urlToImage, description }) => html`
+      <style>
+        h2 {
+          font-family: Georgia, 'Times New Roman', Times, serif;
+        }
 
-    // create style
+        a, a:visited {
+          text-decoration: none;
+          color: inherit;
+        }
 
-    const style = document.createElement('style');
-    style.textContent = `
-      h2 {
-        font-family: Georgia, 'Times New Roman', Times, serif;
-      }
+        img {
+          width: 100%;
+        }
+      </style>
 
-      a, a:visited {
-        text-decoration: none;
-        color: inherit;
-      }
-
-      img {
-        width: 100%;
-      }
+      <a href="${url}">
+        <h2>${title}</h2>
+        ${(() => {
+          if (urlToImage) {
+            return html`
+              <img src="${urlToImage}">
+            `;
+          }
+        })()}
+        ${(() => {
+          if (description) {
+            return html`<p>${description}</p>`
+          }
+        })()}
+      </a>
     `;
 
-    // create content
-
-    const anchor = document.createElement('a')
-    anchor.href = url;
-
-    const heading = document.createElement('h2')
-    heading.appendChild(
-      document.createTextNode(title)
-    )
-    anchor.appendChild(heading)
-
-    if (urlToImage) {
-      const img = document.createElement('img');
-      img.src = urlToImage;
-      anchor.appendChild(img);
-    }
-
-    if (description) {
-      const paragraph = document.createElement('p');
-      const text = document.createTextNode(description);
-      paragraph.appendChild(text);
-      anchor.appendChild(paragraph);
-    }
-
-    // add style and content
-    this.root.appendChild(style);
-    this.root.appendChild(anchor)
+    render(template(data), this.root);
   }
 
 }
